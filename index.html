@@ -1,0 +1,216 @@
+<title>Кто вас уже советует</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;800&family=Manrope:wght@400;500;700;800&display=swap">
+<style>
+/* Рекомендация: страница построена вокруг одной цепочки «клиент - его знакомый - вы».
+   Синий это эксперт, охра это люди, которые его советуют. */
+:root{
+  --bg:#f3f1ec; --surface:#ffffff; --fg:#111722; --muted:#5d6675; --line:#dbdcd6;
+  --give:#2458e6; --get:#b5722a; --ink:#111722;
+  --font-display:"Unbounded","Manrope",system-ui,sans-serif;
+  --font-body:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0c1017; --surface:#151c27; --fg:#eceff5; --muted:#98a3b4; --line:#253040;
+    --give:#7396ff; --get:#e2a765; --ink:#0c1017; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0c1017; --surface:#151c27; --fg:#eceff5; --muted:#98a3b4; --line:#253040;
+  --give:#7396ff; --get:#e2a765; --ink:#0c1017; color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--font-body);
+  font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1060px;margin:0 auto;padding-inline:20px}
+h1,h2,h3{font-family:var(--font-display);font-weight:800;line-height:1.05;
+  letter-spacing:-.02em;text-wrap:balance;margin:0}
+h1{font-size:clamp(33px,6.2vw,64px)}
+h2{font-size:clamp(24px,3.4vw,36px)}
+h3{font-size:18px}
+p{margin:0;max-width:62ch}
+.eyebrow{font-size:12px;font-weight:800;letter-spacing:.22em;text-transform:uppercase;color:var(--muted)}
+.top{display:flex;justify-content:space-between;gap:14px;align-items:center;padding-block:22px;flex-wrap:wrap}
+.who{font-weight:800;font-size:15px}
+.when{font-weight:800;font-size:15px;color:var(--muted);font-variant-numeric:tabular-nums}
+
+.hero{display:grid;gap:24px;padding-block:14px 38px}
+.hero p{font-size:clamp(17px,2vw,20px);color:var(--muted)}
+.cta{display:inline-flex;align-items:center;gap:10px;background:var(--give);color:#fff;
+  text-decoration:none;font-weight:800;font-size:17px;padding:17px 26px;border-radius:13px}
+.cta:hover{filter:brightness(1.08)}
+.cta:focus-visible{outline:3px solid var(--get);outline-offset:3px}
+.ctarow{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.free{font-size:14px;color:var(--muted);font-weight:700}
+
+/* сделка: две встречные колонки */
+.deal{border:1px solid var(--line);border-radius:18px;background:var(--surface);overflow:hidden}
+.deal-grid{display:grid;grid-template-columns:1fr 1fr}
+.side{padding:22px 20px;display:grid;gap:12px;align-content:start;min-width:0}
+.side:first-child{border-right:1px solid var(--line)}
+.side .tag{font-size:12px;font-weight:800;letter-spacing:.16em;text-transform:uppercase}
+.give .tag{color:var(--give)} .get .tag{color:var(--get)}
+.side ul{margin:0;padding:0;list-style:none;display:grid;gap:9px}
+.side li{font-size:15px;font-weight:600;display:flex;gap:9px;align-items:baseline}
+.side li::before{content:"";width:7px;height:7px;border-radius:2px;flex:none;
+  transform:translateY(-1px)}
+.give li::before{background:var(--give)} .get li::before{background:var(--get)}
+.deal-foot{border-top:1px solid var(--line);padding:16px 20px;display:flex;gap:14px;
+  justify-content:space-between;flex-wrap:wrap;align-items:baseline}
+.deal-foot b{font-family:var(--font-display);font-size:19px}
+.deal-foot span{font-size:13px;color:var(--muted);font-weight:700}
+@media (max-width:620px){.deal-grid{grid-template-columns:1fr}
+  .side:first-child{border-right:0;border-bottom:1px solid var(--line)}}
+
+section{padding-block:44px;border-top:1px solid var(--line)}
+.grid{display:grid;gap:18px;margin-top:24px}
+.cols-2{grid-template-columns:repeat(auto-fit,minmax(265px,1fr))}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:20px;
+  display:grid;gap:8px;min-width:0}
+.card p{font-size:15px;color:var(--muted)}
+.list{display:grid;gap:16px;margin-top:22px}
+.row{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:start}
+.num{font-family:var(--font-display);font-size:14px;font-weight:700;color:var(--give);
+  padding-top:3px;font-variant-numeric:tabular-nums}
+ul.plain{margin:0;padding-left:20px;display:grid;gap:8px}
+ul.plain li{font-size:16px}
+
+.facts{display:flex;gap:26px;flex-wrap:wrap;margin-top:20px}
+.fact b{display:block;font-family:var(--font-display);font-size:25px;line-height:1}
+.fact span{font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.note{font-size:14px;color:var(--muted);margin-top:18px}
+
+.final{background:var(--ink);color:#f1f3f7;border-radius:22px;padding:34px 24px;margin-block:44px;display:grid;gap:18px}
+.final h2{color:#fff}
+.final p{color:#c2cad8}
+.count{display:flex;gap:20px;flex-wrap:wrap;font-variant-numeric:tabular-nums}
+.count b{display:block;font-family:var(--font-display);font-size:28px;line-height:1;color:var(--get)}
+.count span{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#94a0b3}
+footer{padding-block:28px 46px;color:var(--muted);font-size:14px;display:grid;gap:6px}
+</style>
+
+<div class="wrap">
+  <div class="top">
+    <div class="who">Мария Кукушкина · контент для бизнеса</div>
+    <div class="when">22 октября, 19:00 мск</div>
+  </div>
+
+  <header class="hero">
+    <div class="eyebrow">Бесплатный эфир, запись остаётся</div>
+    <h1>Кто вас уже<br>советует</h1>
+    <p>Спросите у трёх последних клиентов, как они вас нашли. Двое ответят «мне вас посоветовали». За час посчитаем ваш сарафан и соберём партнёрскую программу одному участнику вживую: кого позвать, что предложить и сколько платить.</p>
+    <div class="ctarow">
+      <a class="cta" href="https://t.me/+8RtGRioh0LBhZWRi" target="_blank" rel="noopener">Забрать место на эфире</a>
+      <span class="free">Регистрация это подписка на закрытый канал</span>
+    </div>
+  </header>
+
+  <div class="deal">
+    <div class="deal-grid">
+      <div class="side give">
+        <div class="tag">Как это работает сейчас</div>
+        <ul>
+          <li>Клиент доволен и советует вас знакомым</li>
+          <li>Вы не знаете, кто именно и сколько раз</li>
+          <li>Благодарности нет, повторить это нечем</li>
+          <li>Канал работает случайно</li>
+        </ul>
+      </div>
+      <div class="side get">
+        <div class="tag">Как будет после</div>
+        <ul>
+          <li>Вы знаете своих десять рекомендателей поимённо</li>
+          <li>У каждого своя ссылка, и покупки видно</li>
+          <li>Человек получает процент с продажи, а не спасибо</li>
+          <li>Канал считается и растёт</li>
+        </ul>
+      </div>
+    </div>
+    <div class="deal-foot">
+      <b>Партнёрская программа, а не сетевой маркетинг</b>
+      <span>Вход бесплатный, вознаграждение только с продажи, партнёры самозанятые</span>
+    </div>
+  </div>
+
+  <section>
+    <div class="eyebrow">Что произойдёт за час</div>
+    <h2>Считаем и собираем, а не слушаем</h2>
+    <div class="list">
+      <div class="row"><div class="num">00:00</div><div><h3>Считаем ваш сарафан</h3><p>Каждый пишет в комментариях, откуда пришли три последних клиента. Через пять минут вы видите свою цифру, а не мою.</p></div></div>
+      <div class="row"><div class="num">00:10</div><div><h3>Почему эта цифра не растёт</h3><p>Рекомендация случайна: её никто не просит, никто не считает и никого за неё не благодарят.</p></div></div>
+      <div class="row"><div class="num">00:20</div><div><h3>Живая сборка</h3><p>Беру одного участника и собираю ему программу прямо на эфире: кто его советует, что этим людям предложить и сколько платить.</p></div></div>
+      <div class="row"><div class="num">00:40</div><div><h3>Показываю бота</h3><p>Как он выдаёт ссылки, считает две линии, показывает партнёру его начисления и присылает вам отчёт, кому сколько перевести.</p></div></div>
+      <div class="row"><div class="num">00:50</div><div><h3>Неловкость и этика</h3><p>Как пригласить своих клиентов, чтобы это звучало благодарностью, а не просьбой продавать. И что делать психологу, у которого кодекс.</p></div></div>
+    </div>
+  <section>
+    <div class="eyebrow">Честный фильтр</div>
+    <h2>Кому идти, а кому нет</h2>
+    <div class="grid cols-2">
+      <div class="card">
+        <div class="eyebrow" style="color:var(--give)">Будет полезно</div>
+        <ul class="plain">
+          <li>Экспертам и мастерам, у кого уже есть довольные клиенты</li>
+          <li>Тем, кто устал искать клиентов и не хочет снимать рилсы</li>
+          <li>Тем, у кого продажи идут по сарафану, но считать его никто не считал</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="eyebrow">Не стоит тратить час</div>
+        <ul class="plain">
+          <li>Новичкам без клиентов: советовать вас пока некому</li>
+          <li>Тем, кто ищет быстрый трафик: рекомендации так не работают</li>
+          <li>Тем, кому нужен разбор рекламных кабинетов</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="eyebrow">Кто ведёт</div>
+    <h2>Мария Кукушкина</h2>
+    <p>Делаю контент для бизнеса восемь лет. Сейчас собираю экспертам партнёрские программы: мини-продукты, приглашение для клиентов и бота, который ведёт партнёров и считает начисления. Всё, что покажу на эфире, работает у меня в проектах.</p>
+    <div class="facts">
+      <div class="fact"><b>8 лет</b><span>в контенте и digital</span></div>
+      <div class="fact"><b>30% и 10%</b><span>ставки первой и второй линии</span></div>
+      <div class="fact"><b>10 партнёров</b><span>первая волна у эксперта</span></div>
+      <div class="fact"><b>0 ₽</b><span>стоит вход для партнёра</span></div>
+    </div>
+    <p class="note">Дохода в процентах не обещаю: у каждого он свой и зависит от того, сколько людей вас советует. На эфире мы это и посчитаем.</p>
+  </section>
+
+  <div class="final">
+    <div class="eyebrow" style="color:#94a0b3">До эфира</div>
+    <div class="count" id="count">
+      <div><b id="d">–</b><span>дней</span></div>
+      <div><b id="h">–</b><span>часов</span></div>
+      <div><b id="m">–</b><span>минут</span></div>
+    </div>
+    <h2>22 октября, 19:00 по Москве</h2>
+    <p>В закрытом канале напоминания, шаблон приглашения для ваших клиентов и запись эфира. Там же оставляют заявку на живую сборку.</p>
+    <div class="ctarow">
+      <a class="cta" href="https://t.me/+8RtGRioh0LBhZWRi" target="_blank" rel="noopener">Забрать место на эфире</a>
+    </div>
+  </div>
+
+  <footer>
+    <div>Мария Кукушкина · ИП · Хабаровск</div>
+    <div>Эфир бесплатный. Запись останется в канале, даже если не получится прийти вживую.</div>
+  </footer>
+</div>
+
+<script>
+(function(){
+  var target = Date.UTC(2026, 9, 22, 16, 0, 0); // 19:00 мск
+  var d = document.getElementById('d'), h = document.getElementById('h'), m = document.getElementById('m');
+  function tick(){
+    var left = target - Date.now();
+    if (left <= 0){ document.getElementById('count').textContent = 'Эфир идёт прямо сейчас'; return; }
+    var mins = Math.floor(left / 60000);
+    d.textContent = Math.floor(mins / 1440);
+    h.textContent = Math.floor(mins % 1440 / 60);
+    m.textContent = mins % 60;
+  }
+  tick(); setInterval(tick, 30000);
+})();
+</script>
